@@ -1,3 +1,19 @@
+##2014-08-13 - Supported Release 1.5.3
+###Summary
+
+This is a bugfix releases.  It addresses a bad regex, failures with unicode
+characters, and issues with the $proxy_host handling in apt::ppa.
+
+####Features
+- Synced files from Modulesync
+
+####Bugfixes
+- Fix regex to follow APT requirements in apt::pin
+- Fix for unicode characters
+- Fix inconsistent $proxy_host handling in apt and apt::ppa
+- Fix typo in README
+- Fix broken acceptance tests
+
 ##2014-07-15 - Supported Release 1.5.2
 ###Summary
 
