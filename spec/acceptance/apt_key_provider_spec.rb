@@ -74,7 +74,7 @@ describe 'apt_key', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) 
 
         # Time to remove it using Puppet
         apply_manifest(pp, :catch_failures => true)
-        expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
+        apply_manifest(pp, :catch_failures => true)
 
         shell("apt-key list | grep #{PUPPETLABS_GPG_KEY_ID}",
               :acceptable_exit_codes => [1])
@@ -176,22 +176,6 @@ ugVIB2pi+8u84f+an4Hml4xlyijgYu05pqNvnLRyJDLd61hviLC8GYU=
   end
 
   describe 'server =>' do
-    context 'pgp.mit.edu' do
-      it 'works' do
-        pp = <<-EOS
-        apt_key { 'puppetlabs':
-          id     => '#{PUPPETLABS_GPG_KEY_ID}',
-          ensure => 'present',
-          server => 'pgp.mit.edu',
-        }
-        EOS
-
-        apply_manifest(pp, :catch_failures => true)
-        expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
-        shell("apt-key list | grep #{PUPPETLABS_GPG_KEY_ID}")
-      end
-    end
-
     context 'nonexistant.key.server' do
       it 'fails' do
         pp = <<-EOS
@@ -205,6 +189,22 @@ ugVIB2pi+8u84f+an4Hml4xlyijgYu05pqNvnLRyJDLd61hviLC8GYU=
         apply_manifest(pp, :expect_failures => true) do |r|
           expect(r.stderr).to match(/(Host not found|Couldn't resolve host)/)
         end
+      end
+    end
+
+    context 'pgp.mit.edu' do
+      it 'works' do
+        pp = <<-EOS
+        apt_key { 'puppetlabs':
+          id     => '#{PUPPETLABS_GPG_KEY_ID}',
+          ensure => 'present',
+          server => 'pgp.mit.edu',
+        }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
+        shell("apt-key list | grep #{PUPPETLABS_GPG_KEY_ID}")
       end
     end
   end
@@ -414,20 +414,6 @@ ugVIB2pi+8u84f+an4Hml4xlyijgYu05pqNvnLRyJDLd61hviLC8GYU=
 
   describe 'keyserver_options =>' do
     context 'debug' do
-      it 'works' do
-        pp = <<-EOS
-        apt_key { 'puppetlabs':
-          id                => '#{PUPPETLABS_GPG_KEY_ID}',
-          ensure            => 'present',
-          keyserver_options => 'debug',
-        }
-        EOS
-
-        apply_manifest(pp, :catch_failures => true)
-        expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
-        shell("apt-key list | grep #{PUPPETLABS_GPG_KEY_ID}")
-      end
-
       it 'fails on invalid options' do
         pp = <<-EOS
         apt_key { 'puppetlabs':
@@ -440,6 +426,20 @@ ugVIB2pi+8u84f+an4Hml4xlyijgYu05pqNvnLRyJDLd61hviLC8GYU=
         apply_manifest(pp, :expect_failures => true) do |r|
           expect(r.stderr).to match(/--keyserver-options this is totally/)
         end
+      end
+
+      it 'works' do
+        pp = <<-EOS
+        apt_key { 'puppetlabs':
+          id                => '#{PUPPETLABS_GPG_KEY_ID}',
+          ensure            => 'present',
+          keyserver_options => 'debug',
+        }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
+        shell("apt-key list | grep #{PUPPETLABS_GPG_KEY_ID}")
       end
     end
   end
