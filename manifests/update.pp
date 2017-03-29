@@ -52,7 +52,7 @@ class apt::update {
   }
   exec { 'apt_update':
     command     => "${::apt::provider} update",
-    logoutput   => 'on_failure',
+    logoutput   => true,
     refreshonly => $_refresh,
     timeout     => $::apt::_update['timeout'],
     tries       => $::apt::_update['tries'],
